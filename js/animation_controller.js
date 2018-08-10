@@ -9,6 +9,7 @@ class animation_controller
 		this.scale = params.scale || 1;
 		this.container = params.container;
 		this.images = this.images||{};
+		$.getScript(params.jsLink);
 		var container = document.getElementById(this.container);
 		//создание stage
 		this.canvas = document.createElement("canvas");
@@ -102,6 +103,12 @@ class animation_controller
 	{
 		this.canvas.height = hight;
 		this.canvas.width = width;
+	}
+	//изменение масштаба
+	setScale(scale)
+	{
+		this.stage.scaleY=scale;
+		this.stage.scaleX=scale;
 	}
 	//начать проигрывание
 	play()

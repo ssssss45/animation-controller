@@ -29,7 +29,8 @@ function addTrener(instance) {
 					{src:"trener/images/Tr_Z_tors.png", id:"Tr_Z_tors"}
 				],
 				'marks' : "lib.trener",
-				'instance' : instance
+				'instance' : instance,
+				'jsLink' : 'trener/trener.js'
 			});
 }
 
@@ -74,7 +75,8 @@ function addScarfman(instance) {
 					{src:"scarfman/images/Sheya.png", id:"Sheya"}
 				],
 				'marks' : "lib.scarfman",
-				'instance' : instance
+				'instance' : instance,
+				'jsLink' : 'scarfman/scarfman.js'
 			});
 }
 
@@ -189,7 +191,8 @@ function addPlayers(instance) {
 					{src:"players/images/Sit_Stopa_R.png", id:"Sit_Stopa_R"}
 				],
 				'marks' : "lib.players",
-				'instance' : instance
+				'instance' : instance,
+				'jsLink' : 'players/players.js'
 			});
 }
 
