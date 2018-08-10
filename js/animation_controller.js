@@ -28,6 +28,7 @@ class animation_controller
 		this.flippedHorizontally=false;
 
 		this.boundEventGenerator = this.eventGenerator.bind(this);
+		this.loaded=false;
 	}
 
 	handleFileLoad(evt)
@@ -62,7 +63,7 @@ class animation_controller
 		this.hight=this.canvas.hight;
 		this.stage.scaleX=this.scale;
 		this.stage.scaleY=this.scale;
-
+		this.loaded=true;
 		var event = new Event('animation_controller: animation loaded');
 		this.stage.dispatchEvent(event);
 	}
@@ -113,15 +114,22 @@ class animation_controller
 	//начать проигрывание
 	play()
 	{
-		createjs.Ticker.setFPS(25);
-		createjs.Ticker.addEventListener("tick", this.stage);
-		createjs.Ticker.addEventListener("tick", this.boundEventGenerator);
+		if (this.loaded)
+		{
+			createjs.Ticker.setFPS(25);
+			createjs.Ticker.addEventListener("tick", this.stage);
+			createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
+		}
+		
 	}
 	//пауза
 	pause()
 	{
-		createjs.Ticker.removeEventListener("tick", this.stage);
-		createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
+		if (this.loaded)
+		{
+			createjs.Ticker.removeEventListener("tick", this.stage);
+			createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
+		}
 	}
 	//проигрывание с метки
 	playFromMark(mark)
