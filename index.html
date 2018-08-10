@@ -7,14 +7,29 @@
 <script src="http://code.createjs.com/movieclip-0.6.0.min.js"></script>
 <script src="http://code.createjs.com/preloadjs-0.3.0.min.js"></script>
 	<script src="trener/trener.js"></script>
+	<script src="scarfman/scarfman.js"></script>
+	<script src="players/players.js"></script>
 <!--	<script src="players/players.js"></script>
 	<script src="scarfman/scarfman.js"></script> -->
 	<script src="js/animation_controller_test.js"></script>
 	<script src="js/animation_controller.js"></script>
 	</head>
-	<body onload="addAnimation();" style="background-color:#D4D4D4">
+	<body style="background-color:#D4D4D4">
 		<div id="animationContainer"></div>
+		<div style="position:absolute"><button type="button" onclick="addTrener()">trener</button>
+		<div style="position:absolute"><button type="button" onclick="addScarfman('instance')">scarfman</button>
+		<div style="position:absolute"><button type="button" onclick="addScarfman('instance_1')">flag scarfman</button>
+		<div style="position:absolute"><button type="button" onclick="addScarfman()">scarfmen</button>
+		<div style="position:absolute"><button type="button" onclick="addPlayers('instance')">left player</button>
+		<div style="position:absolute"><button type="button" onclick="addPlayers('instance_1')">right player</button>
+		<div style="position:absolute"><button type="button" onclick="addPlayers()">both players</button>	
 		<div style="position:absolute"><button type="button" onclick="animController.flipVertical()">Flip Vertical</button>
-		<button type="button" onclick="animController.flipHorizontal()">Flip Horizontal</button></div>
+		<button type="button" onclick="animController.flipHorizontal()">Flip Horizontal</button>
+		<button type="button" onclick="animController.play()">play</button>
+		<button type="button" onclick="animController.pause()">pause</button>
+		<button type="button" onclick="animController.playFromMark('Clocks')">Play from</button>
+		<button type="button" onclick="animController.destroy()">destroy</button>
+		</div>
+	</div>
 	</body>
 </html>
