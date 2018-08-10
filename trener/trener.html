@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CreateJS export from trener</title>
+
+<script src="http://code.createjs.com/easeljs-0.6.0.min.js"></script>
+<script src="http://code.createjs.com/tweenjs-0.4.0.min.js"></script>
+<script src="http://code.createjs.com/movieclip-0.6.0.min.js"></script>
+<script src="http://code.createjs.com/preloadjs-0.3.0.min.js"></script>
+<script src="trener.js"></script>
+
+<script>
+var canvas, stage, exportRoot;
+
+function init() {
+	canvas = document.getElementById("canvas");
+	images = images||{};
+
+	var manifest = [
+		{src:"images/Tr_1_head.png", id:"Tr_1_head"},
+		{src:"images/Tr_1_head_closed.png", id:"Tr_1_head_closed"},
+		{src:"images/Tr_1_rukav.png", id:"Tr_1_rukav"},
+		{src:"images/Tr_1_tors.png", id:"Tr_1_tors"},
+		{src:"images/Tr_C_Hand_1.png", id:"Tr_C_Hand_1"},
+		{src:"images/Tr_C_hand_2.png", id:"Tr_C_hand_2"},
+		{src:"images/Tr_C_hand_3.png", id:"Tr_C_hand_3"},
+		{src:"images/Tr_C_head.png", id:"Tr_C_head"},
+		{src:"images/Tr_C_tors.png", id:"Tr_C_tors"},
+		{src:"images/Tr_S_hand_1.png", id:"Tr_S_hand_1"},
+		{src:"images/Tr_S_hand_2.png", id:"Tr_S_hand_2"},
+		{src:"images/Tr_S_Hand_3.png", id:"Tr_S_Hand_3"},
+		{src:"images/Tr_S_hand_s.png", id:"Tr_S_hand_s"},
+		{src:"images/Tr_S_head.png", id:"Tr_S_head"},
+		{src:"images/Tr_S_tors.png", id:"Tr_S_tors"},
+		{src:"images/Tr_Z_hand_1.png", id:"Tr_Z_hand_1"},
+		{src:"images/Tr_Z_hand_2.png", id:"Tr_Z_hand_2"},
+		{src:"images/Tr_Z_hand_3.png", id:"Tr_Z_hand_3"},
+		{src:"images/Tr_Z_head.png", id:"Tr_Z_head"},
+		{src:"images/Tr_Z_tors.png", id:"Tr_Z_tors"}
+	];
+
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(manifest);
+}
+
+function handleFileLoad(evt) {
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+}
+
+function handleComplete() {
+	exportRoot = new lib.trener();
+
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.update();
+
+	createjs.Ticker.setFPS(25);
+	createjs.Ticker.addEventListener("tick", stage);
+}
+</script>
+</head>
+
+<body onload="init();" style="background-color:#D4D4D4">
+	<canvas id="canvas" width="324" height="315" style="background-color:#e8f1f7"></canvas>
+	<div id="animationContainer"></div>
+</body>
+</html>

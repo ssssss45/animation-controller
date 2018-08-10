@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CreateJS export from scarfman</title>
+
+<script src="http://code.createjs.com/easeljs-0.6.0.min.js"></script>
+<script src="http://code.createjs.com/tweenjs-0.4.0.min.js"></script>
+<script src="http://code.createjs.com/movieclip-0.6.0.min.js"></script>
+<script src="http://code.createjs.com/preloadjs-0.3.0.min.js"></script>
+<script src="scarfman.js"></script>
+
+<script>
+var canvas, stage, exportRoot;
+
+function init() {
+	canvas = document.getElementById("canvas");
+	images = images||{};
+
+	var manifest = [
+		{src:"images/Golova.png", id:"Golova"},
+		{src:"images/Golova_2.png", id:"Golova_2"},
+		{src:"images/GolovaB.png", id:"GolovaB"},
+		{src:"images/KidtSharf_R.png", id:"KidtSharf_R"},
+		{src:"images/KidtSharf_R_White.png", id:"KidtSharf_R_White"},
+		{src:"images/KistSarf_L.png", id:"KistSarf_L"},
+		{src:"images/KistSarf_LWhite.png", id:"KistSarf_LWhite"},
+		{src:"images/Ladon_L.png", id:"Ladon_L"},
+		{src:"images/Ladon_R.png", id:"Ladon_R"},
+		{src:"images/Ladon_RWhite.png", id:"Ladon_RWhite"},
+		{src:"images/Ladon_Tyl.png", id:"Ladon_Tyl"},
+		{src:"images/Lico.png", id:"Lico"},
+		{src:"images/Mayka.png", id:"Mayka"},
+		{src:"images/Mayka_2.png", id:"Mayka_2"},
+		{src:"images/Plecho_L.png", id:"Plecho_L"},
+		{src:"images/Plecho_L_2.png", id:"Plecho_L_2"},
+		{src:"images/Plecho_R.png", id:"Plecho_R"},
+		{src:"images/Plecho_R_2.png", id:"Plecho_R_2"},
+		{src:"images/Predpleche_L.png", id:"Predpleche_L"},
+		{src:"images/Predpleche_L_2.png", id:"Predpleche_L_2"},
+		{src:"images/Predpleche_R.png", id:"Predpleche_R"},
+		{src:"images/Predpleche_R_2.png", id:"Predpleche_R_2"},
+		{src:"images/Sharf1.png", id:"Sharf1"},
+		{src:"images/Sharf1_White.png", id:"Sharf1_White"},
+		{src:"images/Sharf2.png", id:"Sharf2"},
+		{src:"images/Sharf2_White.png", id:"Sharf2_White"},
+		{src:"images/Sharf3.png", id:"Sharf3"},
+		{src:"images/Sharf3White.png", id:"Sharf3White"},
+		{src:"images/Sharf4.png", id:"Sharf4"},
+		{src:"images/Sharf4White.png", id:"Sharf4White"},
+		{src:"images/Sheya.png", id:"Sheya"}
+	];
+
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(manifest);
+}
+
+function handleFileLoad(evt) {
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+}
+
+function handleComplete() {
+	exportRoot = new lib.scarfman();
+
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.update();
+
+	createjs.Ticker.setFPS(25);
+	createjs.Ticker.addEventListener("tick", stage);
+}
+</script>
+</head>
+
+<body onload="init();" style="background-color:#D4D4D4">
+	<canvas id="canvas" width="593" height="190" style="background-color:#e5eff5"></canvas>
+</body>
+</html>
