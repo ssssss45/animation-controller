@@ -75,11 +75,11 @@ class animation_controller
 		//достаём размеры анимации из массива и проверяем что она есть
 		for (var i = 0; i<this.animations.length; i++)
 		{
-			if (this.animations[i].name==animation)
+			if (this.animations[i].name == animation)
 			{
-				this.animationWidth=this.animations[i].width;
-				this.animationHeight=this.animations[i].height;
-				animationExistsFlag=true;
+				this.animationWidth = this.animations[i].width;
+				this.animationHeight = this.animations[i].height;
+				animationExistsFlag = true;
 			}
 		}
 		if (animationExistsFlag)
@@ -94,21 +94,24 @@ class animation_controller
 			{
 				this.setScale(scale);
 			}
-			eval("this.currentAnimation = new " + animation + "()")
+
+			eval("this.currentAnimation = new " + animation + " ()");
 			this.stage.addChild(this.currentAnimation);
 
 			//получение таймлайна
 			this.timeline = this.currentAnimation.timeline._labels;
 			this.marks = Object.values(this.timeline);
 			this.markNames = Object.getOwnPropertyNames(this.timeline);
-			for (var i = 0; i<this.marks.length-1; i++)
+			for (var i = 0; i < this.marks.length - 1; i++)
 				{
-					this.markArray[this.marks[i+1]]=this.markNames[i];
+					this.markArray[this.marks[i + 1]] = this.markNames[i];
 				}
 
 			//отображение анимации на канвасе
+			this.currentAnimation.stop();
 			this.stage.update();
 		}
+
 		else
 		{
 			console.log("ANIMATION CONTROLLER ERROR: animation does not exist");
@@ -118,17 +121,31 @@ class animation_controller
 	//отразить относительно вертикальной линии
 	flipVertical()
 	{
-		this.stage.scaleX = -this.stage.scaleX;
-		this.stage.x = this.stage.x+this.animationWidth*(-this.stage.scaleX);
-		this.stage.update();
+		this.stage.scaleX = - this.stage.scaleX;
+		if (this.stage.scaleX > 0) 
+			{
+				this.stage.x = this.stage.x - this.animationWidth;
+			}
+			else
+			{
+				this.stage.x = this.stage.x + this.animationWidth;
+			}
+		this.stage.update(0);
 	}
 
 	//отразить относительно горизонтальной линии
 	flipHorizontal()
 	{
-		this.stage.scaleY = -this.stage.scaleY;
-		this.stage.y = this.stage.y+this.animationHeight*(-this.stage.scaleY);
-		this.stage.update();
+		this.stage.scaleY = - this.stage.scaleY;
+		if (this.stage.scaleY > 0) 
+			{
+				this.stage.y = this.stage.y - this.animationHeight;
+			}
+			else
+			{
+				this.stage.y = this.stage.y + this.animationHeight;
+			}
+		this.stage.update(0);
 	}
 
 	//изменение размера канваса
@@ -149,6 +166,7 @@ class animation_controller
 	//начать проигрывание
 	play()
 	{
+		this.currentAnimation.play();
 		this.playing = true;
 		createjs.Ticker.setFPS(25);
 		createjs.Ticker.addEventListener("tick", this.stage);
@@ -159,6 +177,7 @@ class animation_controller
 	pause()
 	{
 		this.killListeners();
+		this.currentAnimation.stop();
 	}
 
 	//проигрывание с метки
@@ -177,14 +196,14 @@ class animation_controller
 	//убирает канвас с анимацией
 	destroy()
 	{
-		this.killListeners();
+		this.pause();
 		this.canvas.remove();
 	}
 
 	//очистка stage
 	clear()
 	{
-		this.killListeners();
+		this.pause();
 		this.stage.removeAllChildren();
 		this.stage.update();
 	}
@@ -214,8 +233,8 @@ class animation_controller
 		}
 	}
 
-	//проигрывать анимацию с метки from до метки to (включительно), после чего проигрывание останавливается
-	playFromTo(from, to,loop)
+	//проигрывать анимацию с метки from до метки to (включительно), после чего проигрывание останавливается. зацикливается если loop==true
+	playFromTo(from, to, loop)
 	{
 		this.stopLoop();
 		this.playFromMark(from);
@@ -233,7 +252,7 @@ class animation_controller
 				else
 				{
 					this.stage.removeEventListener('animation_controller: animation section finished playing', boundStopPlayback);
-					this.killListeners();
+					this.pause();
 				}
 			}
 		}
@@ -265,7 +284,7 @@ class animation_controller
 				else
 				{
 					this.stage.removeEventListener('animation_controller: animation section finished playing', boundPutNext);
-					this.killListeners();
+					this.pause();
 				}
 			}
 		}
@@ -275,6 +294,6 @@ class animation_controller
 	stopPlayLoop()
 	{
 		this.stopLoop();
-		this.killListeners();
+		this.pause();
 	}
 }
