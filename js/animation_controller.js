@@ -3,32 +3,41 @@ class animation_controller
 	constructor(params)
 	{
 		this.markArray=[];
-		this.instance=params.instance;
-		this.hight = params.hight || 200 ;
-		this.width = params.width || 200;
-		this.scale = params.scale || 1;
-		this.container = params.container;
 		this.images = this.images||{};
-		$.getScript(params.jsLink);
-		var container = document.getElementById(this.container);
+		this.animations=[];
 		//создание stage
+		this.container = params.animationContainer;
+		var container = document.getElementById("animationContainer");
+		console.log(container);
 		this.canvas = document.createElement("canvas");
-		this.canvas.height=this.hight;
-		this.canvas.width=this.width;
 		this.canvas.style="position: absolute;";
 		container.appendChild(this.canvas);
+		this.stage = new createjs.Stage(this.canvas);
 
+		//цепляние js анимации
+		for (var i=0; i < params.animationAssets.length;i++)
+		{
+			var animation = params.animationAssets[i];
+			this.loadAnimation(animation.jsLink,animation.manifest,animation.animations);	
+		}
+		//таймер проигрывания анимации
 		this.playTime = 0;
-		this.marks = params.marks;
+		this.boundEventGenerator = this.eventGenerator.bind(this);
+		this.loaded=false;
+	}
+
+	//загрузка ассетов анимации и добавление анимаций в массив анимаций
+	loadAnimation(fileLink,manifest,animations)
+	{
+		$.getScript(fileLink);	
 		var loader = new createjs.LoadQueue(false);
 		loader.addEventListener("fileload", this.handleFileLoad.bind(this));
 		loader.addEventListener("complete", this.handleComplete.bind(this));
-		loader.loadManifest(params.manifest);
-		this.flippedVertically=false;
-		this.flippedHorizontally=false;
-
-		this.boundEventGenerator = this.eventGenerator.bind(this);
-		this.loaded=false;
+		loader.loadManifest(manifest);
+		for (var j = 0; j < animations.length; j++)
+		{
+			this.animations.push(animations[j]);
+		}
 	}
 
 	handleFileLoad(evt)
@@ -38,66 +47,69 @@ class animation_controller
 
 	handleComplete() 
 	{
-		this.exportRoot;
-		eval("this.exportRoot = new "+this.marks+"()");
-		this.stage = new createjs.Stage(this.canvas);
-
-		if (this.instance==undefined)
+		var event = new Event('animation_controller: animation loaded');
+		this.stage.dispatchEvent(event);
+	}
+	//установка анимации в stage
+	switchClip(animation, setCanvasToAnimation, scale)
+	{
+		this.stage.removeAllChildren();
+		this.killListeners();
+		var animationExistsFlag=false
+		//достаём размеры анимации из массива и проверяем что она есть
+		for (var i=0; i<this.animations.length; i++)
 		{
-			this.stage.addChild(this.exportRoot);
-			this.timeline=this.exportRoot.instance.timeline._labels;
+			if (this.animations[i].name==animation)
+			{
+				this.animationWidth=this.animations[i].width;
+				this.animationHeight=this.animations[i].height;
+				animationExistsFlag=true;
+			}
+		}
+		if (animationExistsFlag)
+		{
+			eval("this.currentAnimation = new "+animation+"()")
+			this.stage.addChild(this.currentAnimation);
+			//получение таймлайна
+			this.timeline=this.currentAnimation.timeline._labels;
+			this.marks=Object.values(this.timeline);
+			this.markNames=Object.getOwnPropertyNames(this.timeline);
+			for (var i=0; i<this.marks.length-1; i++)
+				{
+					this.markArray[this.marks[i+1]]=this.markNames[i];
+				}
+			//опциональная установка размеров и масштабов
+			if (setCanvasToAnimation)
+			{
+				this.setSize(this.animationHeight,this.animationWidth);
+			}
+			if (scale!=undefined)
+			{
+				this.setScale(scale);
+			}
+			//отображение анимации на канвасе
+			this.stage.update();
+			//установка маркера загрузки
+			this.loaded=true;
 		}
 		else
 		{
-			eval("this.stage.addChild(this.exportRoot."+this.instance+")");
-			eval("this.timeline=this.exportRoot."+this.instance+".timeline._labels");
+			console.log("ANIMATION CONTROLLER ERROR: animation does not exist");
 		}
-
-		this.marks=Object.values(this.timeline);
-		this.markNames=Object.getOwnPropertyNames(this.timeline);
-		for (var i=0; i<this.marks.length-1; i++)
-			{this.markArray[this.marks[i+1]]=this.markNames[i];}
-		
-		this.stage.update();
-		this.width=this.canvas.width;
-		this.hight=this.canvas.hight;
-		this.stage.scaleX=this.scale;
-		this.stage.scaleY=this.scale;
-		this.loaded=true;
-		var event = new Event('animation_controller: animation loaded');
-		this.stage.dispatchEvent(event);
 	}
 	//отразить относительно вертикальной линии
 	flipVertical()
 	{
-		if (this.flippedVertically)
-		{
-			this.stage.x=0;
-			this.stage.skewY=0;
-		}
-		else
-		{
-			this.stage.x=this.canvas.width;
-			this.stage.skewY=180;
-		}
+		this.stage.scaleX= -this.stage.scaleX;
+		this.stage.x=this.stage.x+this.animationWidth*(-this.stage.scaleX);
 		this.stage.update();
-		this.flippedVertically=!this.flippedVertically;
 	}
 	//отразить относительно горизонтальной линии
 	flipHorizontal()
 	{
-		if (this.flippedHorizontally)
-		{
-			this.stage.y=0;
-			this.stage.skewX=0;
-		}
-		else
-		{
-			this.stage.y=this.canvas.height;
-			this.stage.skewX=180;
-		}
+		this.stage.scaleY= -this.stage.scaleY;
+		this.stage.y=this.stage.y+this.animationHeight*(-this.stage.scaleY);
 		this.stage.update();
-		this.flippedHorizontally=!this.flippedHorizontally;
 	}
 	//изменение размера канваса
 	setSize(hight,width)
@@ -106,10 +118,11 @@ class animation_controller
 		this.canvas.width = width;
 	}
 	//изменение масштаба
-	setScale(scale)
+	setScale(scalex,scaley)
 	{
-		this.stage.scaleY=scale;
-		this.stage.scaleX=scale;
+		if( scaley === undefined) scaley = scalex;
+		this.stage.scaleY=scalex;
+		this.stage.scaleX=scaley;
 	}
 	//начать проигрывание
 	play()
@@ -119,22 +132,20 @@ class animation_controller
 			createjs.Ticker.setFPS(25);
 			createjs.Ticker.addEventListener("tick", this.stage);
 			createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
-		}
-		
+		}	
 	}
 	//пауза
 	pause()
 	{
 		if (this.loaded)
 		{
-			createjs.Ticker.removeEventListener("tick", this.stage);
-			createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
+			this.killListeners();
 		}
 	}
 	//проигрывание с метки
 	playFromMark(mark)
 	{
-		this.exportRoot.instance.gotoAndPlay(mark);
+		this.currentAnimation.gotoAndPlay(mark);
 		for (var i=0; i<this.markNames.length;i++)
 		{
 			if (this.markNames[i]==mark)
@@ -146,9 +157,21 @@ class animation_controller
 	//убирает канвас с анимацией
 	destroy()
 	{
+		this.killListeners();
+		this.canvas.remove();
+	}
+	//очистка stage
+	clear()
+	{
+		this.killListeners();
+		this.stage.removeAllChildren();
+		this.stage.update();
+	}
+	//отключение слушателей
+	killListeners()
+	{
 		createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
 		createjs.Ticker.removeEventListener("tick", this.stage);
-		this.canvas.remove();
 	}
 	//генератор событий на звершение проигрывание секций и анимации целиком
 	eventGenerator()
@@ -164,8 +187,16 @@ class animation_controller
 			this.playTime=0;
 			var event = new Event('animation_controller: animation finished playing');
 			this.stage.dispatchEvent(event);
-			
 		}
+	}
+	//проигрывать анимацию с метки from до метки to (включительно), после чего проигрывание останавливается
+	playFromTo(from, to)
+	{
+
+	}
+	//проигрывание списка анимаций. зацикленно если loop==true
+	playSet(list,loop)
+	{
 
 	}
 }

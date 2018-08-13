@@ -7,24 +7,35 @@
 <script src="http://code.createjs.com/movieclip-0.6.0.min.js"></script>
 <script src="http://code.createjs.com/preloadjs-0.3.0.min.js"></script>
 <script src="js/jquery.js"></script>
+<script src="js/animation_controller.js"></script>
 	<script src="js/animation_controller_test.js"></script>
-	<script src="js/animation_controller.js"></script>
 	</head>
 	<body style="background-color:#D4D4D4">
-		<div id="animationContainer"></div>
-		<div style="position:absolute"><button type="button" onclick="addTrener()">trener</button>
-		<div style="position:absolute"><button type="button" onclick="addScarfman('instance')">scarfman</button>
-		<div style="position:absolute"><button type="button" onclick="addScarfman('instance_1')">flag scarfman</button>
-		<div style="position:absolute"><button type="button" onclick="addScarfman()">scarfmen</button>
-		<div style="position:absolute"><button type="button" onclick="addPlayers('instance')">left player</button>
-		<div style="position:absolute"><button type="button" onclick="addPlayers('instance_1')">right player</button>
-		<div style="position:absolute"><button type="button" onclick="addPlayers()">both players</button>	
+
+		<div style="top: 100px; left: 100px; position: absolute;" id="animationContainer"></div>
+
+		<div data-anim="LeftPlayer:static,standup,sitdown=800:600:true:50%:50%"></div>
+
+		<div style="position:absolute">
+			<button type="button" onclick="animController.switchClip('lib.Trener',true)">trener</button>
+		<button type="button" onclick="animController.switchClip('lib.ScarfmanWhite',true,0.5)">scarfman</button>
+		<button type="button" onclick="animController.switchClip('lib.Scarfman',true)">flag scarfman</button>
+		<button type="button" onclick="animController.switchClip('lib.LeftPlayer',true)">left player</button>
+		<button type="button" onclick="animController.switchClip('lib.RightPlayer',true)">right player</button>
+
 		<div style="position:absolute"><button type="button" onclick="animController.flipVertical()">Flip Vertical</button>
 		<button type="button" onclick="animController.flipHorizontal()">Flip Horizontal</button>
+		
 		<button type="button" onclick="animController.play()">play</button>
 		<button type="button" onclick="animController.pause()">pause</button>
-		<button type="button" onclick="animController.playFromMark('Clocks')">Play from</button>
+		<button type="button" onclick="animController.playFromMark('Clocks')">Play trener from clocks</button>
+		
 		<button type="button" onclick="animController.destroy()">destroy</button>
+		<button type="button" onclick="animController.clear()">clear</button>
+		<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on')">play trener from clocks to whistle</button>
+		<button type="button" onclick="animController.playSet('Clocks','Zevanie','Clocks')">play trener clocks zevanie clocks</button>
+
+		<script> loadAnims();</script>
 		</div>
 	</div>
 	</body>
