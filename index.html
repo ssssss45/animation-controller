@@ -33,9 +33,11 @@
 		<button type="button" onclick="animController.destroy()">destroy</button>
 		<button type="button" onclick="animController.clear()">clear</button>
 		<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on')">play trener from clocks to whistle</button>
-		<button type="button" onclick="animController.playSet('Clocks','Zevanie','Clocks')">play trener clocks zevanie clocks</button>
-
-		<script> loadAnims();</script>
+		<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on',true)">play trener from clocks to whistle (looped)</button>
+		<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'])">play trener clocks zevanie clocks</button>
+		<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'],true)">play trener clocks zevanie clocks (looped)</button>
+		<button type="button" onclick="animController.stopPlaySetLoop()">stop the loop</button>
+		<button type="button" onclick="animController.spawn()">spawn</button>
 		</div>
 	</div>
 	</body>

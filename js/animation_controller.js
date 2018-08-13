@@ -2,6 +2,7 @@ class animation_controller
 {
 	constructor(params)
 	{
+		this.stopLoop=function(){};
 		this.markArray=[];
 		this.images = this.images||{};
 		this.animations=[];
@@ -24,6 +25,8 @@ class animation_controller
 		this.playTime = 0;
 		this.boundEventGenerator = this.eventGenerator.bind(this);
 		this.loaded=false;
+		//состояние проигрывания
+		this.playing=false;
 	}
 
 	//загрузка ассетов анимации и добавление анимаций в массив анимаций
@@ -50,7 +53,7 @@ class animation_controller
 		var event = new Event('animation_controller: animation loaded');
 		this.stage.dispatchEvent(event);
 	}
-	//установка анимации в stage
+	//удаление текущей анимации и установка новой анимации в stage
 	switchClip(animation, setCanvasToAnimation, scale)
 	{
 		this.stage.removeAllChildren();
@@ -89,8 +92,6 @@ class animation_controller
 			}
 			//отображение анимации на канвасе
 			this.stage.update();
-			//установка маркера загрузки
-			this.loaded=true;
 		}
 		else
 		{
@@ -127,20 +128,15 @@ class animation_controller
 	//начать проигрывание
 	play()
 	{
-		if (this.loaded)
-		{
-			createjs.Ticker.setFPS(25);
-			createjs.Ticker.addEventListener("tick", this.stage);
-			createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
-		}	
+		this.playing=true;
+		createjs.Ticker.setFPS(25);
+		createjs.Ticker.addEventListener("tick", this.stage);
+		createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
 	}
 	//пауза
 	pause()
 	{
-		if (this.loaded)
-		{
-			this.killListeners();
-		}
+		this.killListeners();
 	}
 	//проигрывание с метки
 	playFromMark(mark)
@@ -172,6 +168,7 @@ class animation_controller
 	{
 		createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
 		createjs.Ticker.removeEventListener("tick", this.stage);
+		this.playing=false;
 	}
 	//генератор событий на звершение проигрывание секций и анимации целиком
 	eventGenerator()
@@ -179,7 +176,7 @@ class animation_controller
 		this.playTime++;
 		if (this.markArray[this.playTime]!=undefined)
 		{
-			var event = new Event('animation_controller: animation section finished playing', {detail: this.markArray[this.playTime]});
+			var event = new CustomEvent('animation_controller: animation section finished playing', {'detail': this.markArray[this.playTime]});
 			this.stage.dispatchEvent(event);
 		}
 		if (this.playTime==this.timeline.stop)
@@ -190,13 +187,69 @@ class animation_controller
 		}
 	}
 	//проигрывать анимацию с метки from до метки to (включительно), после чего проигрывание останавливается
-	playFromTo(from, to)
+	playFromTo(from, to,loop)
 	{
-
+		this.stopLoop();
+		this.playFromMark(from);
+		var boundStopPlayback=stopPlayback.bind(this);
+		this.stage.addEventListener('animation_controller: animation section finished playing', boundStopPlayback);
+		this.stopLoop=function(){this.stage.removeEventListener('animation_controller: animation section finished playing', boundStopPlayback);};
+		function stopPlayback(event)
+		{
+			if(event.detail==to)
+			{
+				if (loop)
+				{
+					this.playFromMark(from);
+				}
+				else
+				{
+					this.stage.removeEventListener('animation_controller: animation section finished playing', boundStopPlayback);
+					this.killListeners();
+				}
+			}
+		}
 	}
 	//проигрывание списка анимаций. зацикленно если loop==true
 	playSet(list,loop)
 	{
-
+		this.stopLoop();
+		var count = 1;
+		this.playFromMark(list[0]);
+		var boundPutNext =  putNext.bind(this);
+		this.stage.addEventListener('animation_controller: animation section finished playing', boundPutNext);
+		this.stopLoop=function(){this.stage.removeEventListener('animation_controller: animation section finished playing', boundPutNext);}
+		
+		function putNext()
+		{
+			if (count<list.length)
+			{
+				this.playFromMark(list[count]);
+				count++;
+			}
+			else
+			{
+				if (loop)
+				{
+					count = 0;
+				}
+				else
+				{
+					this.stage.removeEventListener('animation_controller: animation section finished playing', boundPutNext);
+					this.killListeners();
+				}
+			}
+		}
+	}
+	//отключение цикла для playSet и playFromTo
+	stopPlaySetLoop()
+	{
+		this.stopLoop();
+		this.killListeners();
+	}
+	//метод создания анимаций в DOMах с определенным параметром
+	spawn()
+	{
+		var elementList = document.querySelectorAll("div");
 	}
 }

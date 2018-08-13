@@ -1,3 +1,4 @@
+window.addEventListener('load', loadAnims );
 var animController;
 function loadAnims()
 {
@@ -6,9 +7,6 @@ function loadAnims()
 		animationContainer: "animationContainer",
 	animationAssets: [
 		{
-		//	'hight' : 324,
-		//	'width' : 315,
-		//	'scale' : 1,
 			'manifest' : [
 				{src:"trener/images/Tr_1_head.png", id:"Tr_1_head"},
 				{src:"trener/images/Tr_1_head_closed.png", id:"Tr_1_head_closed"},
@@ -31,12 +29,13 @@ function loadAnims()
 				{src:"trener/images/Tr_Z_head.png", id:"Tr_Z_head"},
 				{src:"trener/images/Tr_Z_tors.png", id:"Tr_Z_tors"}
 			],
-			'animations': [
-			{
-				name: "lib.Trener",
-				width: 324,
-				height: 315
-			}
+			'animations': 
+			[
+				{
+					name: "lib.Trener",
+					width: 324,
+					height: 315
+				}
 			],
 			'jsLink' : 'trener/trener.js'
 		},
@@ -74,7 +73,8 @@ function loadAnims()
 				{src:"scarfman/images/Sharf4White.png", id:"Sharf4White"},
 				{src:"scarfman/images/Sheya.png", id:"Sheya"}
 			],
-			'animations': [
+			'animations': 
+			[
 				{
 					name: 'lib.Scarfman',
 					width: 593,
@@ -89,9 +89,6 @@ function loadAnims()
 			'jsLink' : 'scarfman/scarfman.js'
 		},
 		{
-			'hight' : 384,
-			'width' : 541,
-			'scale' : 1,
 			'manifest' : [
 				{src:"players/images/_1_ShoeLRed.png", id:"_1_ShoeLRed"},
 				{src:"players/images/_1_ShoeRRed.png", id:"_1_ShoeRRed"},
@@ -195,8 +192,6 @@ function loadAnims()
 				{src:"players/images/Sit_Stopa_L.png", id:"Sit_Stopa_L"},
 				{src:"players/images/Sit_Stopa_R.png", id:"Sit_Stopa_R"}
 			],
-			// 'animation' : "lib.players",
-			// 'instance' : instance,
 			'jsLink' : 'players/players.js',
 			'animations': [
 				{
