@@ -14,31 +14,30 @@
 
 		<div style="top: 100px; left: 100px; position: absolute;" id="animationContainer"></div>
 
-		<div data-anim="LeftPlayer:static,standup,sitdown=800:600:true:50%:50%"></div>
+		<div position: absolute; dataAnim="lib.LeftPlayer:static,standup,sitdown=800:600:true:50%:50%"></div>
 
 		<div style="position:absolute">
 			<button type="button" onclick="animController.switchClip('lib.Trener',true)">trener</button>
-		<button type="button" onclick="animController.switchClip('lib.ScarfmanWhite',true,0.5)">scarfman</button>
-		<button type="button" onclick="animController.switchClip('lib.Scarfman',true)">flag scarfman</button>
-		<button type="button" onclick="animController.switchClip('lib.LeftPlayer',true)">left player</button>
-		<button type="button" onclick="animController.switchClip('lib.RightPlayer',true)">right player</button>
+			<button type="button" onclick="animController.switchClip('lib.ScarfmanWhite',true)">scarfman</button>
+			<button type="button" onclick="animController.switchClip('lib.Scarfman',true)">flag scarfman</button>
+			<button type="button" onclick="animController.switchClip('lib.LeftPlayer',true)">left player</button>
+			<button type="button" onclick="animController.switchClip('lib.RightPlayer',true)">right player</button>
 
-		<div style="position:absolute"><button type="button" onclick="animController.flipVertical()">Flip Vertical</button>
-		<button type="button" onclick="animController.flipHorizontal()">Flip Horizontal</button>
-		
-		<button type="button" onclick="animController.play()">play</button>
-		<button type="button" onclick="animController.pause()">pause</button>
-		<button type="button" onclick="animController.playFromMark('Clocks')">Play trener from clocks</button>
-		
-		<button type="button" onclick="animController.destroy()">destroy</button>
-		<button type="button" onclick="animController.clear()">clear</button>
-		<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on')">play trener from clocks to whistle</button>
-		<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on',true)">play trener from clocks to whistle (looped)</button>
-		<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'])">play trener clocks zevanie clocks</button>
-		<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'],true)">play trener clocks zevanie clocks (looped)</button>
-		<button type="button" onclick="animController.stopPlaySetLoop()">stop the loop</button>
-		<button type="button" onclick="animController.spawn()">spawn</button>
+			<div style="position:absolute"><button type="button" onclick="animController.flipVertical()">Flip Vertical</button>
+			<button type="button" onclick="animController.flipHorizontal()">Flip Horizontal</button>
+			
+			<button type="button" onclick="animController.play()">play</button>
+			<button type="button" onclick="animController.pause()">pause</button>
+			<button type="button" onclick="animController.playFromMark('Clocks')">Play trener from clocks</button>
+			
+			<button type="button" onclick="animController.destroy()">destroy</button>
+			<button type="button" onclick="animController.clear()">clear</button>
+			<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on')">play trener from clocks to whistle</button>
+			<button type="button" onclick="animController.playFromTo('Clocks','Whistle_on',true)">play trener from clocks to whistle (looped)</button>
+			<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'])">play trener clocks zevanie clocks</button>
+			<button type="button" onclick="animController.playSet(['Clocks','Zevanie','Clocks'],true)">play trener clocks zevanie clocks (looped)</button>
+			<button type="button" onclick="animController.stopPlayLoop()">stop the loop</button>
+			</div>
 		</div>
-	</div>
 	</body>
 </html>
