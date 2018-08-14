@@ -1,3 +1,4 @@
+//для работы необходим jQuery
 class animation_controller
 {
 	constructor(params)
@@ -11,7 +12,6 @@ class animation_controller
 		//создание stage
 		this.container = params.animationContainer;
 		var container = document.getElementById("animationContainer");
-		console.log(container);
 		this.canvas = document.createElement("canvas");
 		this.canvas.style ="position: absolute;";
 		container.appendChild(this.canvas);
@@ -23,13 +23,13 @@ class animation_controller
 			var animation = params.animationAssets[i];
 			this.loadAnimation(animation.jsLink,animation.manifest,animation.animations);	
 		}
+
 		//таймер проигрывания анимации
 		this.playTime = 0;
 		this.boundEventGenerator = this.eventGenerator.bind(this);
-		this.loaded=false;
-		//состояние проигрывания
-		this.playing=false;
-		this.fps=25;
+
+		//FPS
+		this.fps = 25;
 	}
 
 	//загрузка ассетов анимации и добавление анимаций в массив анимаций
@@ -38,6 +38,7 @@ class animation_controller
 		$.getScript(fileLink);	
 		var loader = new createjs.LoadQueue(false);
 
+		//слушатели на события загрузки файлов и окончание их загрузки
 		loader.addEventListener("fileload", this.handleFileLoad.bind(this));
 		loader.addEventListener("complete", this.handleComplete.bind(this));
 		loader.loadManifest(manifest);
@@ -53,6 +54,7 @@ class animation_controller
 		if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
 	}
 
+	//генерация события по завершению загрузки анимации
 	handleComplete() 
 	{
 		var event = new Event('animation_controller: animation loaded');
@@ -71,6 +73,7 @@ class animation_controller
 		this.killListeners();
 		this.playTime = 0;
 
+		//флаг существования анимации
 		var animationExistsFlag = false;
 
 		//достаём размеры анимации из массива и проверяем что она есть
@@ -84,6 +87,7 @@ class animation_controller
 				animationExistsFlag = true;
 			}
 		}
+
 		if (animationExistsFlag)
 		{
 
@@ -97,25 +101,35 @@ class animation_controller
 				this.setScale(scale);
 			}
 
+			//создание объекта анимации
 			eval("this.currentAnimation = new " + animation + " ()");
+
+			//добавление анимации на stage
 			this.stage.addChild(this.currentAnimation);
 
 			//получение таймлайна
 			this.timeline = this.currentAnimation.timeline._labels;
+			
+			//массив меток
 			this.marks = Object.values(this.timeline);
+
+			//массив названий меток
 			this.markNames = Object.getOwnPropertyNames(this.timeline);
+
+			//массив названий меток по индексам концов меток
 			for (var i = 0; i < this.marks.length - 1; i++)
 				{
 					this.markArray[this.marks[i + 1]] = this.markNames[i];
 				}
 
-			//отображение анимации на канвасе
+			//остановка анимации
 			this.currentAnimation.stop();
+			//отображение анимации на канвасе
 			this.stage.update();
 		}
-
 		else
 		{
+			//вывод сообщения в консоль если запрошенной анимаии не существует
 			console.log("ANIMATION CONTROLLER ERROR: animation does not exist");
 		}
 	}
@@ -169,7 +183,6 @@ class animation_controller
 	play()
 	{
 		this.currentAnimation.play();
-		this.playing = true;
 		createjs.Ticker.setFPS(this.fps);
 		createjs.Ticker.addEventListener("tick", this.stage);
 		createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
@@ -186,7 +199,7 @@ class animation_controller
 	playFromMark(mark)
 	{
 		this.currentAnimation.gotoAndPlay(mark);
-		for (var i = 0; i<this.markNames.length;i++)
+		for (var i = 0; i < this.markNames.length;i++)
 		{
 			if (this.markNames[i] == mark)
 			{
@@ -215,18 +228,19 @@ class animation_controller
 	{
 		createjs.Ticker.removeEventListener("tick", this.boundEventGenerator);
 		createjs.Ticker.removeEventListener("tick", this.stage);
-		this.playing = false;
 	}
 
-	//генератор событий на звершение проигрывание секций и анимации целиком
+	//генератор событий на звершение проигрывание секций и анимации целиком. происходит каждый тик
 	eventGenerator()
 	{
 		this.playTime++;
+		//конец метки
 		if (this.markArray[this.playTime] != undefined)
 		{
 			var event = new CustomEvent('animation_controller: animation section finished playing', {'detail': this.markArray[this.playTime]});
 			this.stage.dispatchEvent(event);
 		}
+		//конец анимации
 		if (this.playTime == this.timeline.stop)
 		{
 			this.playTime = 0;
@@ -241,8 +255,11 @@ class animation_controller
 		this.stopLoop();
 		this.playFromMark(from);
 		var boundStopPlayback = stopPlayback.bind(this);
+		//слушатель на событие конца проигрывания метки
 		this.stage.addEventListener('animation_controller: animation section finished playing', boundStopPlayback);
+		//запоминание функции остановки слушателя
 		this.stopLoop = function(){this.stage.removeEventListener('animation_controller: animation section finished playing', boundStopPlayback);};
+		//функция остановки или перехода в начало, если зациклено
 		function stopPlayback(event)
 		{
 			if(event.detail == to)
@@ -267,12 +284,15 @@ class animation_controller
 		var count = 1;
 		this.playFromMark(list[0]);
 		var boundPutNext =  putNext.bind(this);
+		//слушатель на событие конца проигрывания метки
 		this.stage.addEventListener('animation_controller: animation section finished playing', boundPutNext);
-		this.stopLoop=function(){this.stage.removeEventListener('animation_controller: animation section finished playing', boundPutNext);}
-		
+		//запоминание функции остановки слушателя
+		this.stopLoop = function(){this.stage.removeEventListener('animation_controller: animation section finished playing', boundPutNext);}
+		//функция перехода на следующую метку из списка или остановки, если не зациклено
 		function putNext()
 		{
-			if (count<list.length)
+			//переход к следующему элементу если не конец, переход в начало или отключение слушателя, если конец
+			if (count < list.length)
 			{
 				this.playFromMark(list[count]);
 				count++;

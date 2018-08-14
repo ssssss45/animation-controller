@@ -80,14 +80,12 @@ function loadAnims()
 					{
 						name: 'lib.Scarfman',
 						width: 259,
-						height: 142,
-						fps: 25
+						height: 142
 					},
 					{
 						name: 'lib.ScarfmanWhite',
 						width: 259,
-						height: 142,
-						fps: 25
+						height: 142
 					}
 				],
 				'jsLink' : 'scarfman/scarfman.js'
