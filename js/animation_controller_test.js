@@ -35,7 +35,8 @@ function loadAnims()
 					{
 						name: "lib.Trener",
 						width: 310,
-						height: 286
+						height: 286,
+						fps: 40
 					}
 				],
 				'jsLink' : 'trener/trener.js'
@@ -79,12 +80,14 @@ function loadAnims()
 					{
 						name: 'lib.Scarfman',
 						width: 259,
-						height: 142
+						height: 142,
+						fps: 25
 					},
 					{
 						name: 'lib.ScarfmanWhite',
 						width: 259,
-						height: 142
+						height: 142,
+						fps: 25
 					}
 				],
 				'jsLink' : 'scarfman/scarfman.js'
@@ -198,12 +201,14 @@ function loadAnims()
 					{
 						name: 'lib.LeftPlayer',
 						width: 245,
-						height: 288
+						height: 288,
+						fps: 25
 					},
 					{
 						name: 'lib.RightPlayer',
 						width: 245,
-						height: 288
+						height: 288,
+						fps: 25
 					}
 				]
 			}

@@ -29,6 +29,7 @@ class animation_controller
 		this.loaded=false;
 		//состояние проигрывания
 		this.playing=false;
+		this.fps=25;
 	}
 
 	//загрузка ассетов анимации и добавление анимаций в массив анимаций
@@ -79,6 +80,7 @@ class animation_controller
 			{
 				this.animationWidth = this.animations[i].width;
 				this.animationHeight = this.animations[i].height;
+				this.fps = this.animations[i].fps || 25;
 				animationExistsFlag = true;
 			}
 		}
@@ -168,7 +170,7 @@ class animation_controller
 	{
 		this.currentAnimation.play();
 		this.playing = true;
-		createjs.Ticker.setFPS(25);
+		createjs.Ticker.setFPS(this.fps);
 		createjs.Ticker.addEventListener("tick", this.stage);
 		createjs.Ticker.addEventListener("tick", this.boundEventGenerator);	
 	}
